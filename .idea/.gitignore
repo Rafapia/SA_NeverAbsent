@@ -1,0 +1,6 @@
+# Default ignored files
+/workspace.xml
+
+# Ignore token files and credentials
+credentials.json
+StoredCredential
