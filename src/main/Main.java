@@ -68,7 +68,7 @@ public class Main {
 
         // Print the names and IDs for up to 10 files.
         FileList result = service.files().list()
-                .setPageSize(100)
+                .setPageSize(1000)
                 .setFields("nextPageToken, files(id, name)")
                 .execute();
         List<File> files = result.getFiles();
@@ -76,8 +76,9 @@ public class Main {
             System.out.println("No files found.");
         } else {
             System.out.println("Files:");
-            for (File file : files) {
-                System.out.printf("(%s)\t\t\t\t\t%s\n", file.getId(), file.getName());
+            for (int i = 0; i < files.size(); i++) {
+                File file = files.get(i);
+                System.out.printf("%d - (%s)\t\t\t\t\t%s\n", i, file.getId(), file.getName());
             }
         }
     }
