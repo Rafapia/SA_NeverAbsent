@@ -13,6 +13,9 @@ import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
+import com.google.api.services.docs.v1.Docs;
+import com.google.api.services.docs.v1.DocsScopes;
+import com.google.api.services.docs.v1.model.*;
 import com.google.api.services.drive.model.FileList;
 
 import java.io.FileNotFoundException;
@@ -28,12 +31,13 @@ public class Main {
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
 
+
     /**
      * Global instance of the scopes required by this quickstart.
      * If modifying these scopes, delete your previously saved tokens/ folder.
      */
     private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE_METADATA_READONLY);
-    private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
+    private static final String CREDENTIALS_FILE_PATH = "/TestWithDrive.json";
 
     /**
      * Creates an authorized Credential object.
@@ -66,20 +70,29 @@ public class Main {
                 .setApplicationName(APPLICATION_NAME)
                 .build();
 
-        // Print the names and IDs for up to 10 files.
-        FileList result = service.files().list()
-                .setPageSize(1000)
-                .setFields("nextPageToken, files(id, name)")
+
+         // creating folder
+        File fileMetadata = new File();
+        fileMetadata.setName("Absenses");
+        fileMetadata.setMimeType("application/vnd.google-apps.folder");
+
+        File file = service.files().create(fileMetadata)
+                .setFields("id")
                 .execute();
-        List<File> files = result.getFiles();
-        if (files == null || files.isEmpty()) {
-            System.out.println("No files found.");
-        } else {
-            System.out.println("Files:");
-            for (int i = 0; i < files.size(); i++) {
-                File file = files.get(i);
-                System.out.printf("%d - (%s)\t\t\t\t\t%s\n", i, file.getId(), file.getName());
-            }
-        }
+        System.out.println("Folder ID: " + file.getId());
+
+        // adding new document into folder
+        File doc2 = new File();
+        doc2.setName("testAbsenses");
+        doc2.setMimeType("application/vnd.google-apps.document");
+        doc2.setParents(Collections.singletonList(file.getId()));
+        File doc3 = service.files().create(doc2)
+                .setFields("id")
+                .execute();
+        System.out.println("created doc with name" + doc2.getName());
+
+
+
+
     }
 }
